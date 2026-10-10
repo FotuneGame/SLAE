@@ -58,6 +58,13 @@ const results = systems.map(({ A, b }, idx) => {
     ['Якоби, AᵀAx=Aᵀb', fmt(mN.normB), fmt(mN.rhoB), jacN.k, STATUS[jacN.status], fmt(jacN.error)],
     ['Зейдель, AᵀAx=Aᵀb', fmt(mN.normBz), fmt(mN.rhoBz), seiN.k, STATUS[seiN.status], fmt(seiN.error)],
   ]);
+  console.log('\nРешения итерационных методов (x⁰ = 0):');
+  table(['метод', 'x1', 'x2', 'x3', 'x4'], [
+    ['Якоби', ...jac.x.map(fmt)],
+    ['Зейдель', ...sei.x.map(fmt)],
+    ['Якоби, AᵀAx=Aᵀb', ...jacN.x.map(fmt)],
+    ['Зейдель, AᵀAx=Aᵀb', ...seiN.x.map(fmt)],
+  ]);
   console.log('\nНевязка ‖Ax(k)−b‖:');
   const kList = [0, 1, 2, 3, 4, 5, 10].filter((k) => [jac, sei, jacN, seiN].every((r) => k < r.residuals.length));
   table(['k', 'Якоби', 'Зейдель', 'Якоби, AᵀAx=Aᵀb', 'Зейдель, AᵀAx=Aᵀb'],
