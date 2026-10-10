@@ -1,24 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" width="720" height="420" font-family="Arial, sans-serif" font-size="12">
         <rect width="720" height="420" fill="#fff"/>
         <text x="360" y="26" text-anchor="middle" font-size="15" font-weight="bold">Система 2: AᵀAx = Aᵀb (первые 100 итераций)</text>
-        <line x1="72" x2="696" y1="336" y2="336" stroke="#e5e7eb"/><text x="64" y="340" text-anchor="end">10⁻¹⁵</text>
-<line x1="72" x2="696" y1="285.17647058823525" y2="285.17647058823525" stroke="#e5e7eb"/><text x="64" y="289.17647058823525" text-anchor="end">10⁻¹²</text>
-<line x1="72" x2="696" y1="234.3529411764706" y2="234.3529411764706" stroke="#e5e7eb"/><text x="64" y="238.3529411764706" text-anchor="end">10⁻⁹</text>
-<line x1="72" x2="696" y1="183.52941176470588" y2="183.52941176470588" stroke="#e5e7eb"/><text x="64" y="187.52941176470588" text-anchor="end">10⁻⁶</text>
-<line x1="72" x2="696" y1="132.7058823529412" y2="132.7058823529412" stroke="#e5e7eb"/><text x="64" y="136.7058823529412" text-anchor="end">10⁻³</text>
-<line x1="72" x2="696" y1="81.88235294117648" y2="81.88235294117648" stroke="#e5e7eb"/><text x="64" y="85.88235294117648" text-anchor="end">10⁰</text>
+        <line x1="72" x2="696" y1="336" y2="336" stroke="#e5e7eb"/><text x="64" y="340" text-anchor="end">10⁻¹¹</text>
+<line x1="72" x2="696" y1="291.6923076923077" y2="291.6923076923077" stroke="#e5e7eb"/><text x="64" y="295.6923076923077" text-anchor="end">10⁻⁹</text>
+<line x1="72" x2="696" y1="247.3846153846154" y2="247.3846153846154" stroke="#e5e7eb"/><text x="64" y="251.3846153846154" text-anchor="end">10⁻⁷</text>
+<line x1="72" x2="696" y1="203.07692307692312" y2="203.07692307692312" stroke="#e5e7eb"/><text x="64" y="207.07692307692312" text-anchor="end">10⁻⁵</text>
+<line x1="72" x2="696" y1="158.76923076923077" y2="158.76923076923077" stroke="#e5e7eb"/><text x="64" y="162.76923076923077" text-anchor="end">10⁻³</text>
+<line x1="72" x2="696" y1="114.46153846153848" y2="114.46153846153848" stroke="#e5e7eb"/><text x="64" y="118.46153846153848" text-anchor="end">10⁻¹</text>
+<line x1="72" x2="696" y1="70.15384615384617" y2="70.15384615384617" stroke="#e5e7eb"/><text x="64" y="74.15384615384617" text-anchor="end">10¹</text>
         <text x="72" y="354" text-anchor="middle">0</text>
-<text x="228" y="354" text-anchor="middle">1</text>
-<text x="384" y="354" text-anchor="middle">2</text>
-<text x="540" y="354" text-anchor="middle">3</text>
-<text x="696" y="354" text-anchor="middle">4</text>
+<text x="280" y="354" text-anchor="middle">1</text>
+<text x="488" y="354" text-anchor="middle">2</text>
+<text x="696" y="354" text-anchor="middle">3</text>
         <rect x="72" y="48" width="624" height="288" fill="none" stroke="#9ca3af"/>
         <text x="360" y="382" text-anchor="middle">Номер итерации k</text>
         <text x="16" y="210" text-anchor="middle" transform="rotate(-90 16 210)">‖Ax − b‖∞</text>
-        <path d="M72,58.945L228,110.66L384,162.032L540,209.122L696,260.464" fill="none" stroke="#2563eb" stroke-width="2"/>
+        <path d="M72,64.886L280,135.251L488,204.176L696,273.729" fill="none" stroke="#2563eb" stroke-width="2"/>
         <line x1="210" x2="238" y1="404" y2="404" stroke="#2563eb" stroke-width="2"/>
         <text x="246" y="408">Метод Якоби</text>
-<path d="M72,58.945L228,111.142L384,166.299L540,237.374L696,331.773" fill="none" stroke="#dc2626" stroke-width="2" stroke-dasharray="6 4"/>
+<path d="M72,64.886L280,133.955L488,217.623L696,319.276" fill="none" stroke="#dc2626" stroke-width="2" stroke-dasharray="6 4"/>
         <line x1="380" x2="408" y1="404" y2="404" stroke="#dc2626" stroke-width="2" stroke-dasharray="6 4"/>
         <text x="416" y="408">Метод Зейделя</text>
         </svg>
