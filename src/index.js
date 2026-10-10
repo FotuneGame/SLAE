@@ -1,25 +1,15 @@
 // Практическая работа: решение СЛАУ, вариант 18. Запуск: node src/index.js
+// Входные матрицы A и b задаются в файле input/data.json.
 import { mkdirSync, writeFileSync } from 'node:fs';
 import Table from 'cli-table3';
 import { residualChart } from './chart.js';
+import { systems, params, exactSolutions, exactSolutionProvided } from './data.js';
 import {
   gauss, cramer, gaussJordan, inverse, normMat, normVec, residual,
   iterate, iterationMatrices, normalEquations,
 } from './solvers.js';
 
-// Вариант 18: расширенные матрицы [A | b]
-const systems = [
-  [[-10.73, 18.02, -10.72, 9.64, 19.29],
-   [24.45, -45.51, 25.76, -35.56, -69.81],
-   [-13.1, 25.77, -14.73, 23.91, 46.19],
-   [-21.69, 38.93, -22.03, 26.45, 52.56]],
-  [[3, -0.07, -0.55, -9.52, -22.59],
-   [-5.32, 6.88, 4.52, -1.99, 5.86],
-   [6.56, 6.97, -1.95, 2.13, -4.25],
-   [4.43, -2.01, 8.69, 0.9, 6.06]],
-].map((M) => ({ A: M.map((r) => r.slice(0, -1)), b: M.map((r) => r.at(-1)) }));
-
-const EPS = 1e-6;
+const EPS = params.eps;
 const STATUS = { converged: 'шаг < ε', diverged: 'расходится', maxIter: 'нет сходимости' };
 const fmt = (v) => (v !== 0 && (Math.abs(v) < 1e-4 || Math.abs(v) >= 1e6) ? v.toExponential(2) : v.toFixed(4));
 const table = (head, rows) => {
@@ -41,8 +31,11 @@ const results = systems.map(({ A, b }, idx) => {
   console.log(`\n=== Система ${idx + 1} ===`);
 
   // Прямые методы
-  const g = gauss(A, b), c = cramer(A, b), exact = gaussJordan(A, b);
-  table(['метод', 'x1', 'x2', 'x3', 'x4', '‖Ax−b‖'], [['Гаусс', g.x], ['Крамер', c.x], ['Гаусс-Жордан', exact]]
+  const g = gauss(A, b), c = cramer(A, b), gj = gaussJordan(A, b);
+  // Опорное решение x*: из data.json, а при его отсутствии — лучшее вычисленное (Гаусс–Жордан).
+  const ref = exactSolutions[idx];
+  if (!exactSolutionProvided) console.log(`x* не задано в data.json — ошибки считаются относительно лучшего вычисленного значения [${ref.map(fmt).join(', ')}]`);
+  table(['метод', 'x1', 'x2', 'x3', 'x4', '‖Ax−b‖'], [['Гаусс', g.x], ['Крамер', c.x], ['Гаусс-Жордан', gj]]
     .map(([name, x]) => [name, ...x.map(fmt), fmt(residual(A, x, b))]));
   const Ainv = inverse(A);
   const cond = normMat(A) * normMat(Ainv);
@@ -50,13 +43,13 @@ const results = systems.map(({ A, b }, idx) => {
 
   // Итерационные методы
   const m = iterationMatrices(A);
-  const jac = run(A, b, exact, A, b, { eps: EPS });
-  const sei = run(A, b, exact, A, b, { eps: EPS, seidel: true });
+  const jac = run(A, b, ref, A, b, { eps: EPS });
+  const sei = run(A, b, ref, A, b, { eps: EPS, seidel: true });
   const NE = normalEquations(A, b);
   const mN = iterationMatrices(NE.A);
   const bigRun = { eps: EPS, maxIter: 200000, blowUp: 1e30 };
-  const jacN = run(A, b, exact, NE.A, NE.b, bigRun);
-  const seiN = run(A, b, exact, NE.A, NE.b, { ...bigRun, seidel: true });
+  const jacN = run(A, b, ref, NE.A, NE.b, bigRun);
+  const seiN = run(A, b, ref, NE.A, NE.b, { ...bigRun, seidel: true });
 
   console.log('\nИтерации (x⁰ = 0):');
   table(['метод', '‖B‖', 'ρ(B)', 'итераций', 'результат', '‖x−x*‖'], [
@@ -76,8 +69,8 @@ const results = systems.map(({ A, b }, idx) => {
   writeFileSync(`output/system${idx + 1}.svg`, residualChart(`Система ${idx + 1}: исходная система`, series(jac, sei)));
   writeFileSync(`output/system${idx + 1}-AtA.svg`, residualChart(`Система ${idx + 1}: AᵀAx = Aᵀb (первые 100 итераций)`, series(jacN, seiN)));
 
-  return { A, b, direct: { gauss: g.x, cramer: c.x, gaussJordan: exact, triangular: g.triangular, delta: c.delta, dets: c.dets,
-      residuals: [g.x, c.x, exact].map((x) => residual(A, x, b)) },
+  return { A, b, direct: { gauss: g.x, cramer: c.x, gaussJordan: gj, triangular: g.triangular, delta: c.delta, dets: c.dets,
+      residuals: [g.x, c.x, gj].map((x) => residual(A, x, b)) },
     Ainv, normA: normMat(A), normAinv: normMat(Ainv), cond, matrices: m, jacobi: jac, seidel: sei,
     ata: { jacobi: jacN, seidel: seiN, rhoB: mN.rhoB, rhoBz: mN.rhoBz } };
 });
