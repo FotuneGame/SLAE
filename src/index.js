@@ -1,4 +1,4 @@
-// Практическая работа: решение СЛАУ, вариант 18. Запуск: node src/index.js
+// Практическая работа: решение СЛАУ. Запуск: node src/index.js
 // Входные матрицы A и b задаются в файле input/data.json.
 import { mkdirSync, writeFileSync } from 'node:fs';
 import Table from 'cli-table3';
@@ -55,12 +55,13 @@ const results = systems.map(({ A, b }, idx) => {
   table(['метод', '‖B‖', 'ρ(B)', 'итераций', 'результат', '‖x−x*‖'], [
     ['Якоби', fmt(m.normB), fmt(m.rhoB), jac.k, STATUS[jac.status], fmt(jac.error)],
     ['Зейдель', fmt(m.normBz), fmt(m.rhoBz), sei.k, STATUS[sei.status], fmt(sei.error)],
-    ['Якоби, AᵀAx=Aᵀb', '', fmt(mN.rhoB), jacN.k, STATUS[jacN.status], fmt(jacN.error)],
-    ['Зейдель, AᵀAx=Aᵀb', '', fmt(mN.rhoBz), seiN.k, STATUS[seiN.status], fmt(seiN.error)],
+    ['Якоби, AᵀAx=Aᵀb', fmt(mN.normB), fmt(mN.rhoB), jacN.k, STATUS[jacN.status], fmt(jacN.error)],
+    ['Зейдель, AᵀAx=Aᵀb', fmt(mN.normBz), fmt(mN.rhoBz), seiN.k, STATUS[seiN.status], fmt(seiN.error)],
   ]);
   console.log('\nНевязка ‖Ax(k)−b‖:');
-  table(['k', 'Якоби', 'Зейдель'], [0, 1, 2, 3, 4, 5, 10].filter((k) => k < sei.residuals.length && k < jac.residuals.length)
-    .map((k) => [k, fmt(jac.residuals[k]), fmt(sei.residuals[k])]));
+  const kList = [0, 1, 2, 3, 4, 5, 10].filter((k) => [jac, sei, jacN, seiN].every((r) => k < r.residuals.length));
+  table(['k', 'Якоби', 'Зейдель', 'Якоби, AᵀAx=Aᵀb', 'Зейдель, AᵀAx=Aᵀb'],
+    kList.map((k) => [k, fmt(jac.residuals[k]), fmt(sei.residuals[k]), fmt(jacN.residuals[k]), fmt(seiN.residuals[k])]));
 
   // Графики
   const series = (j, s) => [{ name: 'Метод Якоби', color: '#2563eb', values: j.residuals },
