@@ -1,5 +1,5 @@
 {
-  "exactSolution": [-1, 0, 1, 2],
+  "solution": [-1, 0, 1, 2],
   "params": {
     "eps": 1e-6,
     "random": {

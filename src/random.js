@@ -4,10 +4,8 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import Table from 'cli-table3';
 import { systems, exactSolutions, exactSolutionProvided, params } from './data.js';
-import {
-  gauss, cramer, gaussJordan, inverse, normMat, normVec, residual,
-  iterate, iterationMatrices, normalEquations,
-} from './solvers.js';
+import { gauss, cramer, gaussJordan, jacobi, seidel } from './methods/index.js';
+import { normMat, normVec, residual, inverse, convergence, normal } from './helpers/index.js';
 
 const { percent, runs, seed, maxIter } = params.random;
 const EPS = params.eps;
@@ -53,12 +51,12 @@ const CASES = [
 function analyze(A, b) {
   const g = gauss(A, b), c = cramer(A, b), gj = gaussJordan(A, b);
   const cond = normMat(A) * normMat(inverse(A));
-  const m = iterationMatrices(A);
-  const jac = iterate(A, b, { eps: EPS });
-  const sei = iterate(A, b, { eps: EPS, seidel: true });
-  const NE = normalEquations(A, b);
-  const jacN = iterate(NE.A, NE.b, { eps: EPS, maxIter, blowUp: 1e30 });
-  const seiN = iterate(NE.A, NE.b, { eps: EPS, seidel: true, maxIter, blowUp: 1e30 });
+  const m = convergence(A);
+  const jac = jacobi(A, b, { eps: EPS });
+  const sei = seidel(A, b, { eps: EPS });
+  const NE = normal(A, b);
+  const jacN = jacobi(NE.A, NE.b, { eps: EPS, maxIter, blowUp: 1e30 });
+  const seiN = seidel(NE.A, NE.b, { eps: EPS, maxIter, blowUp: 1e30 });
   return { g, c, gj, cond, m, jac, sei, jacN, seiN };
 }
 

@@ -4,10 +4,8 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import Table from 'cli-table3';
 import { residualChart } from './chart.js';
 import { systems, params, exactSolutions, exactSolutionProvided } from './data.js';
-import {
-  gauss, cramer, gaussJordan, inverse, normMat, normVec, residual,
-  iterate, iterationMatrices, normalEquations,
-} from './solvers.js';
+import { gauss, cramer, gaussJordan, jacobi, seidel } from './methods/index.js';
+import { normMat, normVec, residual, inverse, convergence, normal } from './helpers/index.js';
 
 const EPS = params.eps;
 const STATUS = { converged: 'шаг < ε', diverged: 'расходится', maxIter: 'нет сходимости' };
@@ -20,8 +18,8 @@ const table = (head, rows) => {
 };
 
 // Запуск итераций для системы (As, bs); невязка и ошибка считаются для исходной системы (A, b).
-function run(A, b, exact, As, bs, opts) {
-  const { xs, status } = iterate(As, bs, opts);
+function run(A, b, exact, As, bs, method, opts) {
+  const { xs, status } = method(As, bs, opts);
   const x = xs.at(-1);
   return { status, k: xs.length - 1, x, error: normVec(x.map((v, i) => v - exact[i])),
     residuals: xs.slice(0, 101).map((xk) => residual(A, xk, b)) };
@@ -42,14 +40,14 @@ const results = systems.map(({ A, b }, idx) => {
   console.log(`det(A) = ${fmt(c.delta)}, ‖A‖ = ${fmt(normMat(A))}, ‖A⁻¹‖ = ${fmt(normMat(Ainv))}, cond(A) = ${cond.toFixed(2)}`);
 
   // Итерационные методы
-  const m = iterationMatrices(A);
-  const jac = run(A, b, ref, A, b, { eps: EPS });
-  const sei = run(A, b, ref, A, b, { eps: EPS, seidel: true });
-  const NE = normalEquations(A, b);
-  const mN = iterationMatrices(NE.A);
+  const m = convergence(A);
+  const jac = run(A, b, ref, A, b, jacobi, { eps: EPS });
+  const sei = run(A, b, ref, A, b, seidel, { eps: EPS });
+  const NE = normal(A, b);
+  const mN = convergence(NE.A);
   const bigRun = { eps: EPS, maxIter: 200000, blowUp: 1e30 };
-  const jacN = run(A, b, ref, NE.A, NE.b, bigRun);
-  const seiN = run(A, b, ref, NE.A, NE.b, { ...bigRun, seidel: true });
+  const jacN = run(A, b, ref, NE.A, NE.b, jacobi, bigRun);
+  const seiN = run(A, b, ref, NE.A, NE.b, seidel, bigRun);
 
   console.log('\nИтерации (x⁰ = 0):');
   table(['метод', '‖B‖', 'ρ(B)', 'итераций', 'результат', '‖x−x*‖'], [

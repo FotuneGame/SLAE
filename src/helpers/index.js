@@ -1,0 +1,10 @@
+export { dot, normVec } from './vector.js';
+export { transpose, matMul, augment, identity, normMat } from './matrix.js';
+export { residual } from './residual.js';
+export { eliminate } from './eliminate.js';
+export { det } from './det.js';
+export { inverse } from './inverse.js';
+export { normal } from './normal.js';
+export { spectralRadius } from './spectralRadius.js';
+export { iterationMatrix, seidelMatrix } from './iterationMatrix.js';
+export { convergence } from './convergence.js';
